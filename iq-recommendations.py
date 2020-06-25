@@ -17,13 +17,18 @@ def getArguments():
 	parser.add_argument('-i','--publicId', help='PublicId for the Application', required=True)
 	parser.add_argument('-u','--url', help='', default="http://localhost:8070", required=False)
 	parser.add_argument('-a','--auth', help='', default="admin:admin123", required=False)
+	parser.add_argument('-k','--insecure', help='Disable SSL Certificate validation',action='store_true', required=False)
 	parser.add_argument('-s','--stage', help='', default="build", required=False)
 	parser.add_argument('-l','--limiter', help='', default="10", required=False)
+	
 	args = vars(parser.parse_args())
 	iq_url = args["url"]
-	creds = args["auth"].split(":")
+	creds = args["auth"].split(":",1)
 	iq_session = requests.Session()
 	iq_session.auth = requests.auth.HTTPBasicAuth(creds[0], creds[1])
+	if args["insecure"] == True:
+                print('WARNING: Ignoring SSL Certificate Validation')
+                iq_session.verify = False
 	return args
 #-----------------------------------------------------------------------------
 
