@@ -8,7 +8,7 @@ import json, argparse
 from fpdf import FPDF
 
 ## ----------------------------------------------------------------------------
-t0= time.clock()
+t0= time.process_time()
 iq_url, iq_session = "",""
 
 def getArguments():
@@ -194,7 +194,7 @@ def main():
 		print("Pass in limiter of zero to get all results.")
 		total = limiter
 	for ii in range(total):
-		t1 = int((time.clock() - t0)*100)
+		t1 = int((time.process_time() - t0)*100)
 		print(f"Searching for {ii+1} of {total} components.")
 		c = report['components'][ii]
 		packageUrl = {"packageUrl": c["packageUrl"] } 
@@ -218,8 +218,11 @@ def main():
 	for component in components:
                 if component["packageUrl"]["packageUrl"] is not None:
                         current = component["packageUrl"]["packageUrl"]
-                        no_violations = component["recommendation"]["remediation"]["versionChanges"][0]["data"]["component"]["packageUrl"]
-                        #non_failing = component["recommendation"]["remediation"]["versionChanges"][1]["data"]["component"]["packageUrl"]
+                        if component["recommendation"] is not None:
+                                no_violations = component["recommendation"]["remediation"]["versionChanges"][0]["data"]["component"]["packageUrl"]
+                                #non_failing = component["recommendation"]["remediation"]["versionChanges"][1]["data"]["component"]["packageUrl"]
+                        else:
+                                no_violations = "No recommendation available"
                         aux = [current,no_violations]
                         #aux = [current,no_violations,non_failing]
                         data.append(aux)
